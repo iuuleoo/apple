@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Growper",
-  description: "Landing Page Growper",
+  title: "Apple",
+  description: "Landing Page Apple criada com Next.js e Tailwind CSS",
 };
 
 export default function RootLayout({
