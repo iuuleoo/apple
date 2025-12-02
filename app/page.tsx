@@ -4,6 +4,7 @@ import Benefits from "@/components/benefits";
 import HowItWorks from "../components/HowItWorks";
 import Faq from "@/components/FAQ";
 import Login from "@/components/Login";
+import Footer from "@/components/footer";
 
 
 export default function Home() {
@@ -39,6 +40,11 @@ export default function Home() {
       {/* LOGIN */}
       <section className="mt-28">
         <Login />
+      </section>
+
+      {/* FOOTER */}
+      <section className="mt-40">
+        <Footer />
       </section>
 
     </main>
