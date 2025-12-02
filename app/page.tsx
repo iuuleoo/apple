@@ -1,6 +1,7 @@
 import Header from "@/components/header";
 import Showcase from "../components/Showcase";
 import Benefits from "@/components/benefits";
+import HowItWorks from "../components/HowItWorks";
 
 export default function Home() {
   return (
@@ -23,6 +24,8 @@ export default function Home() {
       <Showcase />
 
       <Benefits />   
+
+      <HowItWorks />
     </main>
   );
 }

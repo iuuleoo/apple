@@ -18,7 +18,16 @@ export default function Header() {
         {/* MENU DESKTOP */}
         <ul className="hidden md:flex items-center gap-7 text-[13.5px] text-neutral-500 font-normal tracking-[-0.2px]">
           <li className="hover:text-black transition-colors cursor-pointer">Início</li>
-          <li className="hover:text-black transition-colors cursor-pointer">Como Funciona</li>
+          <li
+             onClick={() => {
+            document.getElementById("como-funciona")?.scrollIntoView({ behavior: "smooth" });
+         }}
+            className="hover:text-black transition-colors cursor-pointer"
+          >
+             Como Funciona
+          </li>
+
+
           <li>
           <a href="#beneficios" className="hover:text-black transition-colors cursor-pointer">
            Benefícios
@@ -41,7 +50,16 @@ export default function Header() {
         <div className="md:hidden border-t border-black/5">
           <ul className="flex flex-col px-6 py-4 gap-4 text-[15px] text-neutral-700">
             <li className="hover:text-black transition-colors">Início</li>
-            <li className="hover:text-black transition-colors">Como Funciona</li>
+             <li
+               onClick={() => {
+               document.getElementById("como-funciona")?.scrollIntoView({ behavior: "smooth" });
+            }}
+              className="hover:text-black transition-colors cursor-pointer"
+            >
+              Como Funciona
+            </li>
+
+
             <li
                 onClick={() => {
                 document.getElementById("beneficios")?.scrollIntoView({ behavior: "smooth" });

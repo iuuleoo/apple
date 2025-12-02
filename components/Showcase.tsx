@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 type ImageItem = {
   id: number;
@@ -27,7 +28,13 @@ export default function Showcase() {
   }, []);
 
   return (
-    <section className="w-full max-w-5xl mx-auto py-24 px-6">
+    <motion.section
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="w-full max-w-5xl mx-auto py-24 px-6"
+    >
       <div className="relative w-full h-[380px] rounded-3xl overflow-hidden bg-white flex items-center justify-center">
         
         {images.map((image, i) => (
@@ -43,6 +50,6 @@ export default function Showcase() {
         ))}
 
       </div>
-    </section>
+    </motion.section>
   );
 }

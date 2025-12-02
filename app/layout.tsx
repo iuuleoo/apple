@@ -13,14 +13,10 @@ export const metadata: Metadata = {
   description: "Landing Page Apple criada com Next.js e Tailwind CSS",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt" className="h-full w-full">
-      <body className={`${inter.className} antialiased h-full w-full`}>
+    <html lang="pt">
+      <body className={`${inter.className} antialiased`}>
         {children}
       </body>
     </html>
