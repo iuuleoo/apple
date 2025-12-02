@@ -5,6 +5,8 @@ import HowItWorks from "../components/HowItWorks";
 import Faq from "@/components/FAQ";
 import Login from "@/components/Login";
 import Footer from "@/components/footer";
+import Cadastro from "@/components/Cadastro";
+
 
 
 export default function Home() {

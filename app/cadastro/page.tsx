@@ -2,36 +2,36 @@
 
 import { useState } from "react";
 import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
-export default function Login() {
+export default function Cadastro() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
     setErro("");
     setCarregando(true);
 
-    console.log("AUTH TESTE:", auth); // ← IMPORTANTE
-
     try {
-      await signInWithEmailAndPassword(auth, email, senha);
-      alert("Login realizado com sucesso!");
-    } catch (err: any) {
-      console.error("ERRO LOGIN FIREBASE:", err);
-      console.error("Código:", err.code);
+      await createUserWithEmailAndPassword(auth, email, senha);
 
-      if (err.code === "auth/invalid-email") {
+      alert("Conta criada com sucesso!");
+      router.push("/login");
+    } catch (err: any) {
+      if (err.code === "auth/email-already-in-use") {
+        setErro("Este e-mail já está em uso.");
+      } else if (err.code === "auth/weak-password") {
+        setErro("A senha deve ter pelo menos 6 caracteres.");
+      } else if (err.code === "auth/invalid-email") {
         setErro("E-mail inválido.");
-      } else if (err.code === "auth/user-not-found") {
-        setErro("Usuário não encontrado.");
-      } else if (err.code === "auth/wrong-password") {
-        setErro("Senha incorreta.");
       } else {
-        setErro("Erro ao fazer login. Tente novamente.");
+        setErro("Erro ao criar a conta. Verifique os dados.");
       }
     }
 
@@ -39,18 +39,17 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full bg-white py-24 px-6 flex justify-center">
+    <div className="w-full min-h-screen bg-white flex items-center justify-center px-6">
       <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 space-y-8">
 
         <h2 className="text-3xl font-semibold text-center text-black">
-          Login
+          Criar Conta
         </h2>
         <p className="text-center text-gray-600 -mt-4">
-          Acesse sua conta de forma segura.
+          Preencha os dados para se registrar.
         </p>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-
+        <form onSubmit={handleCadastro} className="space-y-4">
           <div className="flex flex-col gap-2">
             <label className="text-gray-700 font-medium">E-mail</label>
             <input
@@ -67,7 +66,7 @@ export default function Login() {
             <label className="text-gray-700 font-medium">Senha</label>
             <input
               type="password"
-              placeholder="Digite sua senha"
+              placeholder="Mínimo 6 caracteres"
               className="w-full border border-gray-300 rounded-xl p-3 
               focus:outline-none focus:ring-2 focus:ring-black/40"
               onChange={(e) => setSenha(e.target.value)}
@@ -84,20 +83,19 @@ export default function Login() {
             disabled={carregando}
             className="w-full bg-black hover:bg-gray-900 text-white font-semibold py-3 rounded-xl transition"
           >
-            {carregando ? "Entrando..." : "Continuar"}
+            {carregando ? "Criando..." : "Criar Conta"}
           </button>
-
-          <p className="text-center text-gray-600">
-            Não tem conta?{" "}
-            <a
-              href="/cadastro"
-              className="text-black font-medium hover:underline"
-            >
-              Criar conta
-            </a>
-          </p>
-
         </form>
+
+        <p className="text-center text-gray-700 text-sm">
+          Já tem conta?{" "}
+          <span
+            className="text-black font-medium underline cursor-pointer"
+            onClick={() => router.push("/login")}
+          >
+            Fazer login
+          </span>
+        </p>
 
       </div>
     </div>
