@@ -2,6 +2,7 @@ import Header from "@/components/header";
 import Showcase from "../components/Showcase";
 import Benefits from "@/components/benefits";
 import HowItWorks from "../components/HowItWorks";
+import Faq from "@/components/FAQ";
 
 export default function Home() {
   return (
@@ -13,19 +14,25 @@ export default function Home() {
         <h2 className="text-4xl font-semibold tracking-tight text-black">
           Bem-vindo à Apple
         </h2>
-
         <p className="text-neutral-600 mt-6 text-lg leading-relaxed max-w-2xl">
           Esta é a página inicial do site da Apple, onde você pode encontrar
           informações sobre nossos produtos e serviços.
         </p>
       </section>
 
-      {/* SHOWCASE aparecendo logo abaixo */}
+      {/* SHOWCASE */}
       <Showcase />
 
-      <Benefits />   
+      {/* BENEFÍCIOS */}
+      <Benefits />
 
+      {/* COMO FUNCIONA */}
       <HowItWorks />
+
+      {/* FAQ */}
+      <section id="faq">
+        <Faq />
+      </section>
     </main>
   );
 }

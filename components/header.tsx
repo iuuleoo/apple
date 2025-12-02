@@ -33,7 +33,14 @@ export default function Header() {
            Benefícios
           </a>
           </li>
-          <li className="hover:text-black transition-colors cursor-pointer">FAQ</li>
+          <li
+            onClick={() => {
+            document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+          }}
+            className="hover:text-black transition-colors cursor-pointer"
+         >
+            FAQ
+          </li>
         </ul>
 
         {/* BOTÃO MOBILE */}
@@ -69,7 +76,15 @@ export default function Header() {
             >
                Benefícios
             </li>
-            <li className="hover:text-black transition-colors">FAQ</li>
+            <li
+               onClick={() => {
+               document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+               setOpen(false);
+             }}
+               className="hover:text-black transition-colors cursor-pointer"
+            >
+               FAQ
+            </li>
           </ul>
         </div>
       )}
