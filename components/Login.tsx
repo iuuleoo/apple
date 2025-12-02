@@ -3,8 +3,12 @@
 import { useState } from "react";
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion"; // ← IMPORTADO
 
 export default function Login() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
@@ -15,14 +19,11 @@ export default function Login() {
     setErro("");
     setCarregando(true);
 
-    console.log("AUTH TESTE:", auth); // ← IMPORTANTE
-
     try {
       await signInWithEmailAndPassword(auth, email, senha);
-      alert("Login realizado com sucesso!");
+      router.push("/loja");
     } catch (err: any) {
       console.error("ERRO LOGIN FIREBASE:", err);
-      console.error("Código:", err.code);
 
       if (err.code === "auth/invalid-email") {
         setErro("E-mail inválido.");
@@ -39,12 +40,19 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full bg-white py-24 px-6 flex justify-center">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 space-y-8">
+    <div className="w-full min-h-screen bg-white flex justify-center items-center px-6">
 
+      {/* ⬇️ Animação aplicada ao card */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 space-y-8"
+      >
         <h2 className="text-3xl font-semibold text-center text-black">
           Login
         </h2>
+
         <p className="text-center text-gray-600 -mt-4">
           Acesse sua conta de forma segura.
         </p>
@@ -98,8 +106,7 @@ export default function Login() {
           </p>
 
         </form>
-
-      </div>
+      </motion.div>
     </div>
   );
 }
