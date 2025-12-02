@@ -6,7 +6,7 @@ export default function HowItWorks() {
   return (
     <section
       id="como-funciona"
-      className="w-full py-20 px-6 bg-neutral-100"
+      className="w-full py-20 px-6 bg-white"
     >
       <div className="max-w-3xl mx-auto text-center">
 

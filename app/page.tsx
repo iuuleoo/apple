@@ -3,6 +3,8 @@ import Showcase from "../components/Showcase";
 import Benefits from "@/components/benefits";
 import HowItWorks from "../components/HowItWorks";
 import Faq from "@/components/FAQ";
+import Login from "@/components/Login";
+
 
 export default function Home() {
   return (
@@ -33,6 +35,12 @@ export default function Home() {
       <section id="faq">
         <Faq />
       </section>
+
+      {/* LOGIN */}
+      <section className="mt-28">
+        <Login />
+      </section>
+
     </main>
   );
 }
