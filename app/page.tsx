@@ -1,5 +1,6 @@
 import Header from "@/components/header";
 import Showcase from "../components/Showcase";
+import Benefits from "@/components/benefits";
 
 export default function Home() {
   return (
@@ -20,6 +21,8 @@ export default function Home() {
 
       {/* SHOWCASE aparecendo logo abaixo */}
       <Showcase />
+
+      <Benefits />   
     </main>
   );
 }
