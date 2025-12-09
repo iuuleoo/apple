@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { authClient } from "@/lib/auth-client";
 
 export default function Cadastro() {
+  const router = useRouter();
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -19,107 +22,94 @@ export default function Cadastro() {
     setCarregando(true);
 
     try {
-      // Criar usuário
-      const res = await createUserWithEmailAndPassword(auth, email, senha);
-
-      // Adicionar nome
-      await updateProfile(res.user, {
-        displayName: nome,
+      const resultado = await authClient.signUp.email({
+        email,
+        password: senha,
+        name: nome, // salva o nome no metadata
       });
 
+      if ("error" in resultado && resultado.error) {
+        const msg = resultado.error.message || "Erro ao criar conta.";
+
+        if (msg.includes("registered")) setErro("Este e-mail já está em uso.");
+        else if (msg.includes("Password")) setErro("A senha deve ter no mínimo 6 caracteres.");
+        else setErro("Erro ao criar conta. Verifique os dados.");
+
+        setCarregando(false);
+        return;
+      }
+
       setSucesso(true);
-      // opcional: limpar campos (mantive apenas nome/email/senha vazios)
       setNome("");
       setEmail("");
       setSenha("");
-    } catch (err: any) {
-      // Mostra o erro completo no console para debug
-      console.error("🔥 ERRO FIREBASE - createUser:", err);
-      console.error("📌 Código do erro:", err?.code);
 
-      // Tratar erros comuns do Firebase
-      if (err?.code === "auth/email-already-in-use") {
-        setErro("Este e-mail já está em uso.");
-      } else if (err?.code === "auth/weak-password") {
-        setErro("A senha deve ter pelo menos 6 caracteres.");
-      } else if (err?.code === "auth/invalid-email") {
-        setErro("E-mail inválido.");
-      } else if (err?.code === "auth/network-request-failed") {
-        setErro("Erro de rede. Verifique sua conexão.");
-      } else {
-        setErro("Erro ao criar a conta. Verifique os dados.");
-      }
+      setTimeout(() => router.push("/login"), 2000);
+
+    } catch (err) {
+      console.error(err);
+      setErro("Erro inesperado.");
     }
 
     setCarregando(false);
   };
 
   return (
-    <div className="w-full bg-white py-24 px-6 flex justify-center">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 space-y-8">
-
-        <h2 className="text-3xl font-semibold text-center text-black">
-          Criar Conta
-        </h2>
-        <p className="text-center text-gray-600 -mt-4">
-          Crie sua conta e acesse nossos serviços.
-        </p>
+    <div className="w-full min-h-screen bg-white flex items-center justify-center px-6">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 space-y-8"
+      >
+        <h2 className="text-3xl font-semibold text-center text-black">Criar Conta</h2>
+        <p className="text-center text-gray-600 -mt-4">Preencha os dados para se registrar.</p>
 
         <form onSubmit={handleCadastro} className="space-y-4">
-
-          {/* Nome */}
           <div className="flex flex-col gap-2">
             <label className="text-gray-700 font-medium">Nome completo</label>
             <input
               type="text"
               placeholder="Seu nome"
-              className="w-full border border-gray-300 rounded-xl p-3 
-              focus:outline-none focus:ring-2 focus:ring-black/40"
+              className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-black/40"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               required
             />
           </div>
 
-          {/* Email */}
           <div className="flex flex-col gap-2">
             <label className="text-gray-700 font-medium">E-mail</label>
             <input
               type="email"
               placeholder="Seu e-mail"
-              className="w-full border border-gray-300 rounded-xl p-3 
-              focus:outline-none focus:ring-2 focus:ring-black/40"
+              className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-black/40"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
-          {/* Senha */}
           <div className="flex flex-col gap-2">
             <label className="text-gray-700 font-medium">Senha</label>
             <input
               type="password"
-              placeholder="Crie uma senha"
-              className="w-full border border-gray-300 rounded-xl p-3 
-              focus:outline-none focus:ring-2 focus:ring-black/40"
+              placeholder="Mínimo 6 caracteres"
+              className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-black/40"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
             />
           </div>
 
-          {/* Erro */}
           {erro && <p className="text-red-600 text-sm text-center">{erro}</p>}
 
-          {/* Sucesso */}
           {sucesso && (
             <p className="text-green-600 text-sm text-center">
-              Conta criada com sucesso! Agora você pode fazer login.
+              Conta criada com sucesso! Redirecionando...
             </p>
           )}
 
-          {/* Botão */}
           <button
             type="submit"
             disabled={carregando}
@@ -127,9 +117,15 @@ export default function Cadastro() {
           >
             {carregando ? "Criando conta..." : "Criar Conta"}
           </button>
-
         </form>
-      </div>
+
+        <p className="text-center text-gray-700 text-sm">
+          Já tem conta?{" "}
+          <span className="text-black font-medium underline cursor-pointer" onClick={() => router.push("/login")}>
+            Fazer login
+          </span>
+        </p>
+      </motion.div>
     </div>
   );
 }

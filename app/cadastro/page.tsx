@@ -1,103 +1,98 @@
 "use client";
 
 import { useState } from "react";
-import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
 export default function Cadastro() {
   const router = useRouter();
 
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
 
-  const handleCadastro = async (e: React.FormEvent) => {
+  async function handleCadastro(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErro("");
     setCarregando(true);
 
-    try {
-      await createUserWithEmailAndPassword(auth, email, senha);
+    const result = await authClient.signUp.email({
+      email,
+      password: senha,
+      name: nome  // ← CORRETO AQUI ✔
+    });
 
-      alert("Conta criada com sucesso!");
-      router.push("/login");
-    } catch (err: any) {
-      if (err.code === "auth/email-already-in-use") {
-        setErro("Este e-mail já está em uso.");
-      } else if (err.code === "auth/weak-password") {
-        setErro("A senha deve ter pelo menos 6 caracteres.");
-      } else if (err.code === "auth/invalid-email") {
-        setErro("E-mail inválido.");
-      } else {
-        setErro("Erro ao criar a conta. Verifique os dados.");
+    if (result.error) {
+      setCarregando(false);
+
+      if (result.error.code === "EMAIL_ALREADY_EXISTS") {
+        return setErro("Este e-mail já está em uso.");
       }
+      if (result.error.code === "WEAK_PASSWORD") {
+        return setErro("Senha muito curta. Mínimo 6 caracteres.");
+      }
+      
+      if (result.error?.message === "Password too short") {
+  return setErro("A senha deve conter no mínimo 8 caracteres.");
+}
+
+    return setErro("Erro ao criar conta. Verifique os dados e tente novamente.");
     }
 
-    setCarregando(false);
-  };
+    router.push("/login");
+  }
 
   return (
-    <div className="w-full min-h-screen bg-white flex items-center justify-center px-6">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 space-y-8">
+    <div className="min-h-screen w-full flex items-center justify-center">
+      <form onSubmit={handleCadastro} className="w-full max-w-md space-y-5 p-6 shadow-xl rounded-2xl">
+        <h1 className="text-2xl font-bold text-center">Criar Conta</h1>
 
-        <h2 className="text-3xl font-semibold text-center text-black">
-          Criar Conta
-        </h2>
-        <p className="text-center text-gray-600 -mt-4">
-          Preencha os dados para se registrar.
-        </p>
+        <input
+          type="text"
+          placeholder="Nome completo"
+          className="border p-3 rounded-xl w-full"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          required
+        />
 
-        <form onSubmit={handleCadastro} className="space-y-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-gray-700 font-medium">E-mail</label>
-            <input
-              type="email"
-              placeholder="Digite seu e-mail"
-              className="w-full border border-gray-300 rounded-xl p-3 
-              focus:outline-none focus:ring-2 focus:ring-black/40"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+        <input
+          type="email"
+          placeholder="Seu e-mail"
+          className="border p-3 rounded-xl w-full"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-          <div className="flex flex-col gap-2">
-            <label className="text-gray-700 font-medium">Senha</label>
-            <input
-              type="password"
-              placeholder="Mínimo 6 caracteres"
-              className="w-full border border-gray-300 rounded-xl p-3 
-              focus:outline-none focus:ring-2 focus:ring-black/40"
-              onChange={(e) => setSenha(e.target.value)}
-              required
-            />
-          </div>
+        <input
+          type="password"
+          placeholder="Senha"
+          className="border p-3 rounded-xl w-full"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          required
+        />
 
-          {erro && (
-            <p className="text-red-600 text-sm text-center">{erro}</p>
-          )}
+        {erro && <p className="text-red-600 text-center text-sm">{erro}</p>}
 
-          <button
-            type="submit"
-            disabled={carregando}
-            className="w-full bg-black hover:bg-gray-900 text-white font-semibold py-3 rounded-xl transition"
-          >
-            {carregando ? "Criando..." : "Criar Conta"}
-          </button>
-        </form>
+        <button
+          type="submit"
+          disabled={carregando}
+          className="w-full bg-black text-white p-3 rounded-xl font-semibold"
+        >
+          {carregando ? "Criando conta..." : "Criar Conta"}
+        </button>
 
-        <p className="text-center text-gray-700 text-sm">
+        <p className="text-center text-sm">
           Já tem conta?{" "}
-          <span
-            className="text-black font-medium underline cursor-pointer"
-            onClick={() => router.push("/login")}
-          >
-            Fazer login
+          <span onClick={() => router.push("/login")} className="underline cursor-pointer font-semibold">
+            Entrar
           </span>
         </p>
-
-      </div>
+      </form>
     </div>
   );
 }
